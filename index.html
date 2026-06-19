@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Snake</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <h1>🐍 Snake</h1>
+
+    <canvas id="mycanvas" width="400" height="400"></canvas>
+
+    <p id="score">Score : 0</p>
+
+<script>
+
+const canvas = document.getElementById("mycanvas");
+const context = canvas.getContext("2d");
+
+const taillecase = 20;
+const nbCases = canvas.width / taillecase;
+
+let score = 0;
+
+let direction = "RIGHT";
+
+const serpent = [
+    {x: 5, y: 5},
+    {x: 4, y: 5},
+    {x: 3, y: 5}
+];
+
+let pomme = {
+    x: Math.floor(Math.random() * nbCases),
+    y: Math.floor(Math.random() * nbCases)
+};
+
+function dessinerQuadrillage() {
+
+    context.strokeStyle = "#333";
+
+    for (let x = 0; x <= canvas.width; x += taillecase) {
+
+        context.beginPath();
+        context.moveTo(x, 0);
+        context.lineTo(x, canvas.height);
+        context.stroke();
+
+    }
+
+    for (let y = 0; y <= canvas.height; y += taillecase) {
+
+        context.beginPath();
+        context.moveTo(0, y);
+        context.lineTo(canvas.width, y);
+        context.stroke();
+
+    }
+}
+
+function dessinerSerpent() {
+
+    context.fillStyle = "lime";
+
+    for (let i = 0; i < serpent.length; i++) {
+
+        context.fillRect(
+            serpent[i].x * taillecase,
+            serpent[i].y * taillecase,
+            taillecase,
+            taillecase
+        );
+
+    }
+}
+
+function dessinerPomme() {
+
+    context.fillStyle = "red";
+
+    context.fillRect(
+        pomme.x * taillecase,
+        pomme.y * taillecase,
+        taillecase,
+        taillecase
+    );
+}
+
+function reinitialiser() {
+
+    alert("Game Over ! Score : " + score);
+
+    serpent.length = 0;
+
+    serpent.push(
+        {x: 5, y: 5},
+        {x: 4, y: 5},
+        {x: 3, y: 5}
+    );
+
+    score = 0;
+
+    document.getElementById("score").textContent =
+        "Score : " + score;
+
+    direction = "RIGHT";
+}
+
+function avancer() {
+
+    const tete = {
+        x: serpent[0].x,
+        y: serpent[0].y
+    };
+
+    if (direction === "UP") tete.y--;
+
+    if (direction === "DOWN") tete.y++;
+
+    if (direction === "LEFT") tete.x--;
+
+    if (direction === "RIGHT") tete.x++;
+
+    if (
+        tete.x < 0 ||
+        tete.x >= nbCases ||
+        tete.y < 0 ||
+        tete.y >= nbCases
+    ) {
+        reinitialiser();
+        return;
+    }
+
+    for (let i = 0; i < serpent.length; i++) {
+
+        if (
+            tete.x === serpent[i].x &&
+            tete.y === serpent[i].y
+        ) {
+            reinitialiser();
+            return;
+        }
+    }
+
+    serpent.unshift(tete);
+
+    if (
+        tete.x === pomme.x &&
+        tete.y === pomme.y
+    ) {
+
+        score++;
+
+        document.getElementById("score").textContent =
+            "Score : " + score;
+
+        pomme = {
+            x: Math.floor(Math.random() * nbCases),
+            y: Math.floor(Math.random() * nbCases)
+        };
+
+    } else {
+
+        serpent.pop();
+
+    }
+}
+
+document.addEventListener("keydown", function(event) {
+
+    if (
+        event.key === "ArrowUp" &&
+        direction !== "DOWN"
+    ) {
+        direction = "UP";
+    }
+
+    if (
+        event.key === "ArrowDown" &&
+        direction !== "UP"
+    ) {
+        direction = "DOWN";
+    }
+
+    if (
+        event.key === "ArrowLeft" &&
+        direction !== "RIGHT"
+    ) {
+        direction = "LEFT";
+    }
+
+    if (
+        event.key === "ArrowRight" &&
+        direction !== "LEFT"
+    ) {
+        direction = "RIGHT";
+    }
+
+});
+
+setInterval(function() {
+
+    context.fillStyle = "black";
+    context.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    dessinerQuadrillage();
+    dessinerPomme();
+    avancer();
+    dessinerSerpent();
+
+}, 120);
+
+</script>
+
+</body>
+</html>
