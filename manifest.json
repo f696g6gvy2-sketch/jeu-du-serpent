@@ -3,12 +3,12 @@
   "name": "Mon Application Super",
   "icons": [
     {
-      "src": "images.png",
+      "src": "1.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "images.png",
+      "src": "1.png",
       "type": "image/png",
       "sizes": "192x192"
     }
